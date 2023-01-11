@@ -1,0 +1,43 @@
+.create-pb-page{
+    input{
+        border: 1px solid #222;
+        border-radius: 5px;
+        font-size: 0.9em;
+        padding: 4px 8px;
+        margin-bottom: 10px;
+    }
+    select{
+        display: block;
+        margin-bottom: 10px;
+        border: 1px solid #222;
+        border-radius: 5px;
+        outline: none;
+        font-size: 1em;
+        padding: 2px 5px;
+        option{
+            font-size: 1em;
+        }
+    }
+    label{
+        display: block;
+    }
+    .btn-container{
+        display: flex;
+        justify-content: space-between;
+        .btn{
+            color: #fff;
+            &.submit{
+                background-color: lightgreen;
+            }
+            &.cancel{
+                background-color: lightcoral;
+            }
+            .icon{
+                display: inline-block;
+                margin-right: 3px;
+                transform: translateY(1px);
+            }
+        }
+        
+    }
+}

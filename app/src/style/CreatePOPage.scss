@@ -1,0 +1,152 @@
+.create-po-page{
+    display: flex;
+    flex-direction: column;
+    input{
+        border: 1px solid #222;
+        border-radius: 5px;
+        font-size: 0.9em;
+        padding: 4px 8px;
+        margin-bottom: 10px;
+    }
+    select{
+        display: block;
+        margin-bottom: 10px;
+        border: 1px solid #222;
+        border-radius: 5px;
+        outline: none;
+        font-size: 1em;
+        padding: 2px 5px;
+        option{
+            font-size: 1em;
+        }
+    }
+    label{
+        display: block;
+    }
+    .center-wrapper{
+        height: 100%;
+        width: 700px;
+        position: relative;
+        .header-row{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .btn{
+                margin: 0;
+            }
+        }
+        .order-btn-container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            .btn{
+                margin: 0 5px;
+                &.submit{
+                    background-color: lightseagreen;
+                }
+                &.cancel{
+                    background-color: lightcoral;
+                }
+            }
+        }
+        h2{
+            text-align: center;
+            margin: 10px 0;
+        }
+        h3{
+            margin: 20px 0 5px;
+        }
+        .supplier-chooser{
+            margin-bottom: 10px;
+            select{
+                display: inline-block;
+                margin-left: 5px;
+                border: 1px solid #222;
+                border-radius: 5px;
+                outline: none;
+                font-size: 0.9em;
+                padding: 4px 4px;
+                color:#000;
+                option{
+                    font-size: 1em;
+                }
+            }
+        }
+        .btn{
+            display: block;
+            font-size: 0.9em;
+            margin: 15px auto 10px;
+        }
+        p{
+            margin-bottom: 10px;
+        }
+        .table{
+            .row{
+                li{
+                    padding: 2px 10px;
+                    &.btn-container{
+                        display: flex;
+                        justify-content: space-evenly;
+                        align-items: center;
+                        .btn{
+                            margin: 0;
+                            font-size: 0.8em;
+                            color: #fff;
+                            &.delete{
+                                background-color: lightcoral;
+                            }
+                            &.edit{
+                                background-color: lightseagreen;
+                            }
+                        }
+                    }
+                }
+                &:nth-child(2n + 1){
+                    background-color: #eee;
+                }
+            }
+        }
+        .form{
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            box-shadow: 0 0 2px rgba(0, 0, 0, .3), 0 0 10px rgba(0, 0, 0, .1);
+            padding: 30px 40px;
+            border-radius: 10px;
+            h3{
+                text-align: center;
+                margin-bottom: 15px;
+            }
+            input{
+                display: block;
+                border: 1px solid #222;
+                border-radius: 5px;
+                font-size: 0.9em;
+                padding: 4px 8px;
+                margin-bottom: 10px;
+            }
+            .btn-container{
+                display: flex;
+                justify-content: space-between;
+                .btn{
+                    color: #fff;
+                    &.submit{
+                        background-color: lightgreen;
+                    }
+                    &.cancel{
+                        background-color: lightcoral;
+                    }
+                    .icon{
+                        display: inline-block;
+                        margin-right: 3px;
+                        transform: translateY(1px);
+                    }
+                }
+                
+            }
+        }
+    }
+}
