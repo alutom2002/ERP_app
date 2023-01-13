@@ -75,3 +75,11 @@ button {
 input,select,textarea {
     color: #000!important;
 }
+
+.dpnone{
+    display: none!important;
+}
+
+.form{
+    background-color: #3a3a3a!important;
+}

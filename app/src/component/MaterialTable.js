@@ -31,8 +31,9 @@ export default function MaterialTable(props){
         setCheckResult('');
     }
 
-    const canAddCheckResult = status === 'PREPARE_MAT' && role === ROLE.INSPECTOR;
-
+    const canAddCheckResult = status === 'PREPARE_MAT';
+    console.log("Mat: ", matList);
+    console.log("Material: ",materials)
     return(
         <>
             <h3>Material List:</h3>
@@ -42,19 +43,18 @@ export default function MaterialTable(props){
                     <li>Material Name</li>
                     <li>Quantity</li>
                     <li>Unit</li>
-                    <li>Check result</li>
-                    <li>Check time</li>
-                    {canAddCheckResult && <li></li>}
+                    {/* <li>Check result</li>
+                    <li>Check time</li> */}
                     {status === 'DONE' && <li>QR</li>}
                 </ul>
                 {
                     matList.map((mat, i) => (
                         <ul className='row' key={i}>
                             <li>{mat.mat_id}</li>
-                            <li>{materials[i].mat_info.name}</li>
+                            <li>{materials[i].name}</li>
                             <li>{mat.quantity}</li>
-                            <li>{materials[i].mat_info.unit}</li>
-                            <li>{mat.check_result}</li>
+                            <li>{materials[i].unit}</li>
+                            {/* <li>{mat.check_result}</li>
                             <li>{mat.check_timestamp !== '0' ? new Date(parseInt(mat.check_timestamp)*1000).toLocaleDateString() : ''}</li>
                             {
                                 canAddCheckResult && (
@@ -62,13 +62,13 @@ export default function MaterialTable(props){
                                         {mat.check_result === '' &&  <button className="btn submit" onClick={()=>addCheck(i)}><span className='icon'><FaPencilAlt/></span>Add Material Check</button>}
                                     </li>
                                 )
-                            }
+                            } */}
                             {status === 'DONE' && <QR value={'/o/' + materials[i].order_id}/>}
                         </ul>
                     ))
                 }
                 {matList.length === 0 && <ul className='row'><li>None</li></ul>}
-                {openForm && (
+                {/* {openForm && (
                     <div className='form'>
                         <h3>Add Material Check</h3>
                         <input placeholder='Check result' onChange={e => setCheckResult(e.target.value)}/>
@@ -77,7 +77,7 @@ export default function MaterialTable(props){
                             <button className='btn cancel' onClick={closeForm}><span className='icon'><FaTimes/></span>Cancel</button>
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </>
     )

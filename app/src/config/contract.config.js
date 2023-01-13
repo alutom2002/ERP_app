@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = '0x49b88AF6E8187264b51EDc7935C1141c18E6cc28';
+export const CONTRACT_ADDRESS = '0xe24C78AeAab2A4A2429Db589031b8e479b9Aef61';
 export const CONTRACT_ABI = [
   {
     "anonymous": false,
@@ -120,6 +120,24 @@ export const CONTRACT_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "batch_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum ErpContract.BATCH_STATUS",
+        "name": "new_status",
+        "type": "uint8"
+      }
+    ],
+    "name": "changeBatchStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "order_id",
         "type": "uint256"
       },
@@ -130,24 +148,6 @@ export const CONTRACT_ABI = [
       }
     ],
     "name": "changeOrderStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "batch_id",
-        "type": "uint256"
-      },
-      {
-        "internalType": "enum ErpContract.BATCH_STATUS",
-        "name": "new_status",
-        "type": "uint8"
-      }
-    ],
-    "name": "changePBStatus",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -367,19 +367,6 @@ export const CONTRACT_ABI = [
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "batch_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "finishProduce",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getMaterialList",
     "outputs": [
@@ -415,6 +402,165 @@ export const CONTRACT_ABI = [
         "name": "",
         "type": "tuple[]"
       },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "supplier",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "customer",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "order_date",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "received_date",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "unit",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "used",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "orderid",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "batchid",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ErpContract.ProductPerUnit[]",
+                "name": "p",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "quantity",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ErpContract.ProductInfo[]",
+            "name": "item_list",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "order_id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "quantity",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "unit",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct ErpContract.Material[]",
+            "name": "mtl_list",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ErpContract.ORDER_STATUS",
+                "name": "status",
+                "type": "uint8"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ErpContract.OrderEvent[]",
+            "name": "timeline",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "isSO",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct ErpContract.Order[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "partner",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "isSO",
+        "type": "bool"
+      }
+    ],
+    "name": "getOrder",
+    "outputs": [
       {
         "components": [
           {
@@ -716,17 +862,12 @@ export const CONTRACT_ABI = [
   {
     "inputs": [
       {
-        "internalType": "enum ErpContract.BATCH_STATUS",
-        "name": "status",
-        "type": "uint8"
-      },
-      {
-        "internalType": "bool",
-        "name": "isByStatus",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "batch_id",
+        "type": "uint256"
       }
     ],
-    "name": "getPBList",
+    "name": "getPB",
     "outputs": [
       {
         "components": [
@@ -829,29 +970,10 @@ export const CONTRACT_ABI = [
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct ErpContract.ProductBatch[]",
+        "internalType": "struct ErpContract.ProductBatch",
         "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "partner",
-        "type": "string"
+        "type": "tuple"
       },
-      {
-        "internalType": "bool",
-        "name": "isSO",
-        "type": "bool"
-      }
-    ],
-    "name": "getPOByPartnerOrAll",
-    "outputs": [
       {
         "components": [
           {
@@ -860,24 +982,93 @@ export const CONTRACT_ABI = [
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "order_id",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
-            "name": "supplier",
+            "name": "name",
             "type": "string"
           },
+          {
+            "internalType": "uint256",
+            "name": "quantity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "unit",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct ErpContract.Material[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProducts",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "unit",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "used",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "orderid",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "batchid",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ErpContract.ProductPerUnit[]",
+            "name": "p",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "quantity",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ErpContract.ProductInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
           {
             "internalType": "string",
             "name": "customer",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "order_date",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "received_date",
-            "type": "uint256"
           },
           {
             "components": [
@@ -925,70 +1116,11 @@ export const CONTRACT_ABI = [
               }
             ],
             "internalType": "struct ErpContract.ProductInfo[]",
-            "name": "item_list",
+            "name": "product_list",
             "type": "tuple[]"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "order_id",
-                "type": "uint256"
-              },
-              {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "quantity",
-                "type": "uint256"
-              },
-              {
-                "internalType": "string",
-                "name": "unit",
-                "type": "string"
-              }
-            ],
-            "internalType": "struct ErpContract.Material[]",
-            "name": "mtl_list",
-            "type": "tuple[]"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ErpContract.ORDER_STATUS",
-                "name": "status",
-                "type": "uint8"
-              },
-              {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct ErpContract.OrderEvent[]",
-            "name": "timeline",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "isSO",
-            "type": "bool"
           }
         ],
-        "internalType": "struct ErpContract.Order[]",
+        "internalType": "struct ErpContract.ProductsOfCustomer[]",
         "name": "",
         "type": "tuple[]"
       }

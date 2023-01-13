@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { contract } from '../helper/web3';
 import toastr from 'toastr';
 
-function CreatePBPage(props){
+function CreatePBPage(props) {
     const nav = useNavigate();
 
-    const {address} = props.account;
+    const { address } = props.account;
 
     const [materials, setMaterials] = useState([]);
     const [productMatList, setProductMatList] = useState([]);
@@ -20,7 +20,7 @@ function CreatePBPage(props){
     const [productQuantity, setProductQuantity] = useState(10);
     const [productUnit, setProductUnit] = useState('cai');
 
-    
+
     const [editIndex, setEditIndex] = useState(-1);
     const [openForm, setOpenForm] = useState(false);
     const [matIndex, setMatIndex] = useState(0);
@@ -28,107 +28,105 @@ function CreatePBPage(props){
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
 
-    useEffect(()=>{
+    useEffect(() => {
         getMaterials();
     }, []);
 
-    async function getMaterials(){
+    async function getMaterials() {
         const data = await contract.methods.getMaterialList().call();
         setMaterials(data[0]);
     }
 
-    function openAddForm(){
+    function openAddForm() {
         setOpenForm(true);
     }
 
-    function openEditForm(i, {index, quantity}){
+    function openEditForm(i, { index, quantity }) {
         setMatIndex(index);
         setQuantity(quantity);
         setEditIndex(i);
         setOpenForm(true);
     }
 
-    function deleteMaterial(index){
+    function deleteMaterial(index) {
         setProductMatList(state => state.filter((o, i) => i !== index));
     }
-
-    function submitForm(){
+    function submitForm() {
         const mat = materials[matIndex];
-        if(quantity > parseInt(mat.mat_info.quantity)){
+        if (quantity > parseInt(mat.quantity)) {
             return toastr.warning("Not enough quantity");
         }
-        else if(quantity < 1){
+        else if (quantity < 1) {
             return toastr.warning("Invalid quantity");
         }
         const material = {
             id: mat.id,
             index: matIndex,
-            name: mat.mat_info.name,
-            unit: mat.mat_info.unit,
+            name: mat.name,
+            unit: mat.unit,
             quantity: quantity,
         };
 
-        if(editIndex > -1){
+        if (editIndex > -1) {
             setProductMatList(productMatList.map((o, i) => {
-                if(i === editIndex)
+                if (i === editIndex)
                     return material;
                 return o;
             }));
         }
-        else{
+        else {
             setProductMatList(state => [...state, material]);
         }
 
         closeForm();
     }
 
-    function closeForm(){
+    function closeForm() {
         setEditIndex(-1);
         setOpenForm(false);
         setMatIndex(0);
         setQuantity(0);
     }
 
-    async function createOrder(){
-        try{
-            const productInfo = [productName, productQuantity, productUnit];
-            const matList = productMatList.map(pm => [pm.id, pm.quantity, '', 0]);
+    async function createOrder() {
+        try {
+            const matList = productMatList.map(pm => [pm.id, pm.quantity]);
 
-            const sd = parseInt(new Date(startDate).getTime()/1000);
-            const ed = parseInt(new Date(endDate).getTime()/1000);
-
-            contract.methods.createProductBatch(productInfo, matList, sd, ed).send({from: address})
-            .once('receipt', async r => {
-                console.log(r);
-                toastr.success('Create order success!');
-
-                const id = await contract.methods.batch_count().call();
-                nav('/batchs/' + id);
-            });
+            const sd = parseInt(new Date(startDate).getTime() / 1000);
+            const ed = parseInt(new Date(endDate).getTime() / 1000);
+            const quantityy = parseInt(productQuantity);
+            console.log(matList);
+            contract.methods.createPB(productName, productUnit, quantityy, matList, sd, ed)
+                .send({ from: "0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6" })
+                .once('receipt', async r => {
+                    console.log(r);
+                    toastr.success('Create order success!');
+                    const id = await contract.methods.batch_count().call();
+                    nav('/batchs/' + id);
+                });
         }
-        catch(e){
+        catch (e) {
             console.log(e);
         }
     }
 
-    function cancelOrder(){
+    function cancelOrder() {
         nav('/');
     }
-
-    return(
+    return (
         <div className="page create-po-page create-pb-page">
             <div className="center-wrapper">
                 <h2>Create Production Batch</h2>
                 <div className='order-btn-container'>
-                    <button onClick={createOrder} className='btn submit'>Confirm Creation</button>
-                    <button onClick={cancelOrder} className='btn cancel'>Cancel Creation</button>
+                    <button onClick={createOrder} className='btn submit'>Confirm</button>
+                    <button onClick={cancelOrder} className='btn cancel'>Cancel</button>
                 </div>
                 <h3>Infomations:</h3>
-                <p>Product name: <input placeholder='product name' onChange={e => setProductName(e.target.value)}/></p>
-                <p>Quantity: <input placeholder='quantity' onChange={e => setProductQuantity(e.target.value)}/></p>
-                <p>Unit: <input placeholder='unit' onChange={e => setProductUnit(e.target.value)}/></p>
-                <p>Start date: <input type='date' onChange={e => setStartDate(e.target.value)}/></p>
-                <p>End date: <input type='date' onChange={e => setEndDate(e.target.value)}/></p>
+                <p>Product name: <input placeholder='product name' onChange={e => setProductName(e.target.value)} /></p>
+                <p>Quantity: <input placeholder='quantity' onChange={e => setProductQuantity(e.target.value)} /></p>
+                <p>Unit: <input placeholder='unit' onChange={e => setProductUnit(e.target.value)} /></p>
+                <p>Start date: <input type='date' onChange={e => setStartDate(e.target.value)} /></p>
+                <p>End date: <input type='date' onChange={e => setEndDate(e.target.value)} /></p>
                 <button className="btn order-btn" onClick={openAddForm}>Add Material</button>
                 <h3>Material List:</h3>
                 <div className="table order-list">
@@ -147,8 +145,8 @@ function CreatePBPage(props){
                                 <li>{mat.quantity}</li>
                                 <li>{mat.unit}</li>
                                 <li className='btn-container'>
-                                    <button className="btn delete" onClick={()=>deleteMaterial(i)}><span className='icon'><FaTrash/></span>Delete</button>
-                                    <button className="btn edit" onClick={()=>openEditForm(i, mat)}><span className='icon'><FaPencilAlt/></span>Edit</button>
+                                    <button className="btn delete" onClick={() => deleteMaterial(i)}><span className='icon'><FaTrash /></span>Delete</button>
+                                    <button className="btn edit" onClick={() => openEditForm(i, mat)}><span className='icon'><FaPencilAlt /></span>Edit</button>
                                 </li>
                             </ul>
                         ))
@@ -163,17 +161,17 @@ function CreatePBPage(props){
                                 Material:
                                 <select onChange={e => setMatIndex(e.target.value)}>
                                     {
-                                        materials.map((mat, i) => <option key={mat.id} value={i}>{mat.mat_info.name} - Quantity left: {mat.mat_info.quantity}</option>)
+                                        materials.map((mat, i) => <option key={mat.id} value={i}>{mat.name} - Quantity left: {mat.quantity}</option>)
                                     }
                                 </select>
                             </label>
                             <label>
                                 Quantity:
-                                <input type='number' placeholder='Quantity' value={quantity} onChange={e => setQuantity(e.target.value)}/>
+                                <input type='number' placeholder='Quantity' value={quantity} onChange={e => setQuantity(e.target.value)} />
                             </label>
                             <div className="btn-container">
-                                <button className='btn submit' onClick={submitForm}><span className='icon'><FaCheck/></span>{editIndex > -1 ? 'Edit' : 'Add'}</button>
-                                <button className='btn cancel' onClick={closeForm}><span className='icon'><FaTimes/></span>Cancel</button>
+                                <button className='btn submit' onClick={submitForm}><span className='icon'><FaCheck /></span>{editIndex > -1 ? 'Edit' : 'Add'}</button>
+                                <button className='btn cancel' onClick={closeForm}><span className='icon'><FaTimes /></span>Cancel</button>
                             </div>
                         </div>
                     )

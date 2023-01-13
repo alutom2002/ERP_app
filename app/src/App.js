@@ -14,6 +14,7 @@ import { setAccount } from './redux/action/account';
 
 import { stateToProps } from './helper/stateToProps';
 import OrderPage from './page/OrderPage';
+import ScanPage from './page/ScanPage';
 import CreatePBPage from './page/CreatePBPage';
 import BatchPage from './page/BatchPage';
 import toastr from "toastr";
@@ -52,6 +53,7 @@ function App(props) {
 				<Route path="/create-purchase-order" element={<CreatePOPage/>}></Route>
 				<Route path="/create-production-batch" element={<CreatePBPage/>}></Route>
 				<Route path="/orders/:id" element={<OrderPage/>}></Route>
+				<Route path="/scan" element={<ScanPage/>}></Route>
 				<Route path="/batchs/:id" element={<BatchPage/>}></Route>
 				<Route path="/qr/o/:id" element={<OrderPage/>}></Route>
 				<Route path="/qr/b/:id" element={<BatchPage/>}></Route>

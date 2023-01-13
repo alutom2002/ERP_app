@@ -25,16 +25,18 @@ function CreatePOPage(props) {
     const [unit, setUnit] = useState('met');
     const [receiveDate, setReceiveDate] = useState(0);
     const [batchIndex, setBatchIndex] = useState(0);
+
     useEffect(() => {
         const getBatchs = async () => { //
-            const data = await contract.methods.getPBList(0, false).call();
-            setBatchs(data);
-            console.log(data);
+            const data = await contract.methods.getProducts().call();
+            console.log("Products: ", data[0]);
+            setBatchs(data[0]);
+            console.log("Batchs: ", batchs);
         }
         if (role === ROLE.RETAILER)
             getBatchs();
     }, [props.account.role]);
-
+    
     function openAddForm() {
         setOpenForm(true);
     }
@@ -68,7 +70,6 @@ function CreatePOPage(props) {
         else {
             setOrderList(state => [...state, orderProduct]);
         }
-
         closeForm();
     }
 
@@ -79,17 +80,19 @@ function CreatePOPage(props) {
         setQuantity(0);
         setUnit('');
     }
-
     function submitForm2() {
-        if (parseInt(batchs[batchIndex]?.product_info.quantity) < quantity) {
+        if (parseInt(batchs[batchIndex].quantity) < quantity) {
             return toastr.warning("Not enough quantity");
         }
         else if (quantity < 1) {
             return toastr.warning("Invalid quantity");
         }
+
         const orderProduct = {
             index: batchIndex,
-            quantity: quantity,
+            name: batchs[batchIndex].p[0].name,
+            unit: batchs[batchIndex].p[0].unit,
+            quantity: parseInt(quantity),
         };
 
         if (editIndex > -1) {
@@ -102,28 +105,43 @@ function CreatePOPage(props) {
         else {
             setOrderList(state => [...state, orderProduct]);
         }
-
         closeForm();
     }
-
     async function confirmPO() { //
         try {
             const { name: supName } = suppliers[supplier];
-            const customerContact = [customer, address];
-            let orders = [];
-            let supplierContact = "";
-            console.log(contract);
-            console.log(contract.methods);
-            orders = orderList.map(({ name, quantity, unit }) => [name, quantity, unit]);
-            supplierContact = [supName];
+            let porders = [];
+            let sorders = [];
+            porders = orderList.map(({ id, orderid, name, quantity, unit }) => [id ? id : 0, orderid ? orderid : 0, name, quantity, unit]);
+            sorders = [[[[orderList[0].index, orderList[0].name, orderList[0].unit, false, 0, 0]], orderList[0].quantity]];
+            //sorders = orderList.map(({ id, orderid, batchid, used, name, quantity, unit}) => [[[[id ? id : 0, name, unit, false, orderid ? orderid : 0, batchid ? batchid : 0]],quantity]]);
+            console.log(orderList);
+            console.log(sorders)
+            let test = [[[[1, "a", "b", false, 1, 1]], 5]];
+            console.log(test);
             const rd = parseInt(new Date(receiveDate).getTime() / 1000);
-            contract.methods.createPO("supplier", "manager", [[1, 1, "vai", 50, "met"]], 123124);
-            /*.once('receipt', async r => {
-                console.log(r);
-                toastr.success('Create order success!');
-                const id = await contract.methods.order_count().call();
-                nav('/orders/' + id);
-            }); */
+            if (role === ROLE.MANAGER) {
+                console.log("RUN");
+                contract.methods.createPO(supName, customer, porders, rd)
+                    .send({ from: '0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6' })
+                    .once('receipt', async r => {
+                        console.log(r);
+                        toastr.success('Create order success!');
+                        const id = await contract.methods.order_count().call();
+                        nav('/orders/' + id);
+                    });
+            }
+            else if (role === ROLE.RETAILER) {
+                contract.methods.createSO(accounts[0].name, customer, sorders, rd)
+                    .send({ from: '0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6' })
+                    .once('receipt', async r => {
+                        console.log(r);
+                        toastr.success('Create order success!');
+                        const id = await contract.methods.order_count().call();
+                        nav('/orders/' + id);
+                    });
+            }
+
         }
         catch (e) {
             console.log(e);
@@ -138,14 +156,14 @@ function CreatePOPage(props) {
         return (
             <div className="page create-po-page">
                 <div className="center-wrapper">
-                    <h2>Create Purchase Product Order</h2>
+                    <h2>Create Sale Order</h2>
                     <div className='order-btn-container'>
-                        <button onClick={confirmPO} className='btn submit'>Confirm Creation</button>
-                        <button onClick={cancelOrder} className='btn cancel'>Cancel Creation</button>
+                        <button onClick={confirmPO} className='btn submit'>Confirm</button>
+                        <button onClick={cancelOrder} className='btn cancel'>Cancel</button>
                     </div>
                     <h3>Infomations:</h3>
-                    <p>Customer: <span>{customer}</span></p>
                     <p>Supplier: <span>{accounts[0].name}</span></p>
+                    <p>Customer: <span>{customer}</span></p>
                     <p>Receive date: <input type='date' onChange={e => setReceiveDate(e.target.value)} /></p>
                     <div className='header-row'>
                         <h3>Order list:</h3>
@@ -161,8 +179,8 @@ function CreatePOPage(props) {
                         {
                             orderList.map((order, i) => ( //
                                 <ul className='row' key={i}>
-                                    <li>{batchs[order.index].id}</li>
-                                    <li>{batchs[order.index].product_info.name}</li>
+                                    <li>{batchs[batchIndex].p[0].id}</li>
+                                    <li>{batchs[batchIndex].p[0].name}</li>
                                     <li>{order.quantity}</li>
                                     <li className='btn-container'>
                                         <button className="btn delete" onClick={() => deleteOrderProduct(i)}><span className='icon'><FaTrash /></span>Delete</button>
@@ -181,7 +199,11 @@ function CreatePOPage(props) {
                                     Product:
                                     <select onChange={e => setBatchIndex(e.target.value)}>
                                         {
-                                            batchs.map(({ product_info: p }, i) => <option value={i}>{p.name} - Quantity left: {p.quantity}</option>)
+                                            batchs.map((batch) => (
+                                            <option value={batch.p[0].name}>
+                                                {batch.p[0].name} - Quantity left: {batch.quantity}
+                                            </option>
+                                            ))
                                         }
                                     </select>
                                 </label>
@@ -211,8 +233,8 @@ function CreatePOPage(props) {
             <div className="center-wrapper">
                 <h2>Create Purchase Material order</h2>
                 <div className='order-btn-container'>
-                    <button onClick={confirmPO} className='btn submit'>Confirm Creation</button>
-                    <button onClick={cancelOrder} className='btn cancel'>Cancel Creation</button>
+                    <button onClick={confirmPO} className='btn submit'>Confirm</button>
+                    <button onClick={cancelOrder} className='btn cancel'>Cancel</button>
                 </div>
                 <h3>Infomations:</h3>
                 <p>Customer: <span>{customer}</span></p>
@@ -239,6 +261,8 @@ function CreatePOPage(props) {
                     {
                         orderList.map((order, i) => (
                             <ul className='row' key={i}>
+                                <li className='dpnone'>{order.id}</li>
+                                <li className='dpnone'>{order.orderid}</li>
                                 <li>{order.name}</li>
                                 <li>{order.quantity}</li>
                                 <li>{order.unit}</li>

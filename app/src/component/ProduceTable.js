@@ -5,7 +5,7 @@ import toastr from 'toastr';
 import { ROLE } from '../helper/role';
 
 export default function ProduceTable(props){
-    const {role, batchId, address, produceList, status} = props;
+    const {role, batchId, address, produceList, status, create_at, finished_at} = props;
 
     const [openForm, setOpenForm] = useState(false);
     const [produceName, setProduceName] = useState('');
@@ -32,7 +32,7 @@ export default function ProduceTable(props){
         setOpenForm(false);
         setProduceName('');
     }
-
+    console.log("Produce: ", produceList);
     const canAction = status === 'PRODUCE' && role === ROLE.PRODUCER;
 
     return(
@@ -52,12 +52,12 @@ export default function ProduceTable(props){
                     produceList.map((produce, i) => (
                         <ul className='row' key={i}>
                             <li>{produce.name}</li>
-                            <li>{new Date(parseInt(produce.started_at)*1000).toLocaleDateString()}</li>
-                            <li>{produce.finished_at !== '0' ? new Date(parseInt(produce.finished_at)*1000).toLocaleDateString() : ''}</li>
+                            <li>{new Date(parseInt(create_at)*1000).toLocaleDateString()}</li>
+                            <li>{finished_at !== '0' ? new Date(parseInt(finished_at)*1000).toLocaleDateString() : ''}</li>
                             {
                                 canAction && (
                                     <li className='btn-container'>
-                                        {produce.finished_at === '0' &&  <button className="btn submit" onClick={()=>finishProduce(i)}><span className='icon'><FaCheck/></span>Done</button>}
+                                        {finished_at === '0' &&  <button className="btn submit" onClick={()=>finishProduce(i)}><span className='icon'><FaCheck/></span>Done</button>}
                                     </li>
                                 )
                             }

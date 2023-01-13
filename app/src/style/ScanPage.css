@@ -1,0 +1,195 @@
+:root {
+    --accent: 124, 58, 237;
+    --accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
+    --accent-gradient-background: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%)
+}
+
+html {
+    font-family: system-ui, sans-serif;
+}
+
+code {
+    font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace
+}
+
+.container.svelte-1eadklx.svelte-1eadklx {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid rgb(var(--accent), .25);
+    border-radius: 8px;
+    color: #111;
+    width: 100%;
+}
+
+.connect-wallet-btn.svelte-1eadklx.svelte-1eadklx {
+    align-self: flex-start;
+    margin-block-start: 24px;
+    margin-block-end: 32px
+}
+
+.svelte-1eadklx.svelte-1eadklx {
+    display: flex;
+    align-items: baseline;
+    gap: 12px
+}
+
+input.svelte-1eadklx.svelte-1eadklx {
+    flex: 1;
+    border: 1px solid rgb(var(--accent), .25);
+    border-radius: 8px;
+    padding: 12px
+}
+
+button.svelte-1eadklx.svelte-1eadklx {
+    border: none;
+    border-radius: 8px;
+    background-image: var(--accent-gradient);
+    background-size: 400%;
+    background-position: 100%;
+    transition: background-position .6s cubic-bezier(.22, 1, .36, 1);
+    padding: 2px;
+    cursor: pointer
+}
+
+button.svelte-1eadklx>span.svelte-1eadklx {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #111;
+    font-weight: 600;
+    background-color: #fff;
+    opacity: .8;
+    padding: 12px;
+    border-radius: 6px;
+    transition: color .6s cubic-bezier(.22, 1, .36, 1)
+}
+
+button.svelte-1eadklx.svelte-1eadklx:hover,
+button.svelte-1eadklx.svelte-1eadklx:focus {
+    background-position: 0
+}
+
+button.svelte-1eadklx:hover span.svelte-1eadklx,
+button.svelte-1eadklx:focus span.svelte-1eadklx {
+    color: rgb(var(--accent))
+}
+
+.message-list.svelte-1eadklx.svelte-1eadklx {
+    display: flex;
+    flex-direction: column;
+    gap: 16px
+}
+
+.meta.svelte-1eadklx.svelte-1eadklx {
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: 6px
+}
+
+.meta.svelte-1eadklx span.svelte-1eadklx {
+    color: #757575;
+    font-size: .875rem
+}
+
+.message.svelte-1eadklx.svelte-1eadklx {
+    border-radius: 1px 6px 6px;
+    background-image: var(--accent-gradient);
+    background-size: 400%
+}
+
+.message.svelte-1eadklx p.svelte-1eadklx {
+    background-color: #fff;
+    opacity: .9;
+    color: #111;
+    padding-block: 10px;
+    padding-inline: 14px
+}
+
+h2.svelte-1eadklx.svelte-1eadklx {
+    margin: 0;
+    font-size: 1.25rem
+}
+
+p.svelte-1eadklx.svelte-1eadklx {
+    margin-top: .5rem;
+    margin-bottom: 0;
+    color: #444
+}
+
+main:where(.astro-UL4SEYQL) {
+    margin: auto;
+    padding: 1.5rem;
+    max-width: 60ch
+}
+
+h1:where(.astro-UL4SEYQL) {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0
+}
+
+.text-gradient:where(.astro-UL4SEYQL) {
+    background-image: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400%;
+    background-position: 0%
+}
+
+.instructions:where(.astro-UL4SEYQL) {
+    line-height: 1.6;
+    margin: 1rem 0;
+    border: 1px solid rgba(var(--accent), 25%);
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: .4rem
+}
+
+.instructions:where(.astro-UL4SEYQL) code:where(.astro-UL4SEYQL) {
+    font-size: .875em;
+    font-weight: 700;
+    background: rgba(var(--accent), 12%);
+    color: rgb(var(--accent));
+    border-radius: 4px;
+    padding: .3em .45em
+}
+
+.instructions:where(.astro-UL4SEYQL) strong:where(.astro-UL4SEYQL) {
+    color: rgb(var(--accent))
+}
+
+.link-card-grid:where(.astro-UL4SEYQL) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+    gap: 1rem;
+    padding: 0
+}
+
+h1:where(.astro-UL4SEYQL) {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 64px;
+}
+
+.dataContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 600px;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.w-100{
+    width: 100%;
+}

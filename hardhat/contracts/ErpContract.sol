@@ -4,6 +4,7 @@ pragma solidity ^0.8.17;
 contract ErpContract {
     enum ORDER_STATUS {
         CREATED,
+        PENDING,
         ACCEPTED,
         DENIED,
         DELIVERING,
@@ -89,6 +90,7 @@ contract ErpContract {
     mapping(uint256 => Material) public materials;
     uint256 public cus_count = 0;
     mapping(uint256 => ProductsOfCustomer) public Customers;
+        
     function createPO(string memory supplier,string memory customer,Material[] calldata mtl_list,uint256 rd) external {
         Order storage order = orders[++order_count];
         order.id = order_count;
@@ -142,41 +144,35 @@ contract ErpContract {
         }
         emit reload();
     }
-    function changePBStatus(uint256 batch_id, BATCH_STATUS new_status)external{
-        uint256 timeline_count = batchs[batch_id].timeline.length;
-        BATCH_STATUS current_status = batchs[batch_id].timeline[timeline_count - 1].status;
-        require(current_status != BATCH_STATUS.DONE && current_status != BATCH_STATUS.CANCEL);
+    function changeBatchStatus(uint256 batch_id, BATCH_STATUS new_status) external {
         batchs[batch_id].timeline.push(BatchEvent(new_status, block.timestamp));
-        emit reload();
-    }
-    function finishProduce(uint256 batch_id) external {
-        uint256 timeline_count = batchs[batch_id].timeline.length;
-        BATCH_STATUS current_status = batchs[batch_id].timeline[timeline_count - 1].status;
-        require(current_status == BATCH_STATUS.PRODUCE);
-        delete p;
-        uint256 orderid = materials[batchs[batch_id].mat_list[0].mat_id].order_id;
-        uint256 len = batchs[batch_id].info.quantity;
-        for (uint256 i = 0; i < len; i++) {
-            pu.id = ++p_count;
-            pu.name = batchs[batch_id].info.p[0].name;
-            pu.unit = batchs[batch_id].info.p[0].unit;
-            pu.used = false;
-            pu.batchid = batch_id;
-            pu.orderid = orderid;
-            p.push(pu);
+        if (new_status != BATCH_STATUS.DONE) {
+            emit reload();}
+        else {
+            delete p;
+            uint256 orderid = materials[batchs[batch_id].mat_list[0].mat_id]
+                .order_id;
+            uint256 len = batchs[batch_id].info.quantity;
+
+            for (uint256 i = 0; i < len; i++) {
+                pu.id = ++p_count;
+                pu.name = batchs[batch_id].info.p[0].name;
+                pu.unit = batchs[batch_id].info.p[0].unit;
+                pu.used = false;
+                pu.batchid = batch_id;
+                pu.orderid = orderid;
+                p.push(pu);
+            }
+            ProductInfo storage producti4 = products[++product_count];
+            for (uint256 i = 0; i < p.length; i++) {
+                producti4.p.push(p[i]);
+            }
+            producti4.quantity = batchs[batch_id].info.quantity;
+            delete p;
+            emit reload();
         }
-        ProductInfo storage producti4 = products[++product_count];
-        for (uint256 i = 0; i < p.length; i++) {
-            producti4.p.push(p[i]);
-        }
-        producti4.quantity = batchs[batch_id].info.quantity;
-        delete p;
-        emit reload();
     }
     function changeOrderStatus(uint256 order_id, ORDER_STATUS new_status) external{
-        uint256 timeline_count = orders[order_id].timeline.length;
-        ORDER_STATUS current_status = orders[order_id].timeline[timeline_count - 1].status;
-        require(current_status != ORDER_STATUS.RECEIVED && current_status != ORDER_STATUS.DENIED && current_status != ORDER_STATUS.CANCEL);
         if (new_status == ORDER_STATUS.DELIVERING && orders[order_id].isSO == true) {
             orders[order_id].timeline.push(OrderEvent(new_status, "", block.timestamp));
             uint256 len = orders[order_id].item_list.length;
@@ -238,7 +234,7 @@ contract ErpContract {
         }
         return false;
     }
-    function getPOByPartnerOrAll(string memory partner, bool isSO)external view returns (Order[] memory){
+    function getOrder(string memory partner, bool isSO)external view returns (Order[] memory){
         Order[] memory list = new Order[](order_count);
         uint256 count = 0;
         if (compare(partner, "")) {
@@ -260,7 +256,19 @@ contract ErpContract {
     function getOrderById(uint256 id) external view returns (Order memory) {
         return orders[id];
     }
-    function getPBList(BATCH_STATUS status, bool isByStatus) external view returns (ProductBatch[] memory){
+    function getProducts() external view returns (ProductInfo[] memory, ProductsOfCustomer[] memory) {
+        ProductInfo[] memory ppp = new ProductInfo[](product_count);
+        for (uint256 i = 1; i <= product_count; i++) {
+            ppp[i - 1] = products[i];
+        }
+        ProductsOfCustomer[] memory ppp2 = new ProductsOfCustomer[](cus_count);
+        for (uint256 i = 1; i <= cus_count; i++) {
+            ppp2[i - 1] = Customers[i];
+        }
+
+        return (ppp,ppp2);
+    }
+    /* function getPBList(BATCH_STATUS status, bool isByStatus) external view returns (ProductBatch[] memory){
         ProductBatch[] memory list = new ProductBatch[](batch_count);
         uint256 count = 0;
         for (uint256 i = 1; i <= batch_count; i++) {
@@ -275,7 +283,7 @@ contract ErpContract {
             }
         }
         return list;
-    }
+    } */
     function getMaterialList() external view returns (Material[] memory, Order[] memory){
         Material[] memory mat_list = new Material[](material_count);
         Order[] memory mat_order_list = new Order[](material_count);
@@ -284,5 +292,14 @@ contract ErpContract {
             mat_order_list[i - 1] = orders[materials[i].order_id];
         }
         return (mat_list, mat_order_list);
+    }
+    function getPB(uint batch_id) external view returns(ProductBatch memory, Material[] memory){
+        uint len = batchs[batch_id].mat_list.length;
+        Material[] memory mat_list = new Material[](len);
+        for(uint i=0; i<len; i++){
+            uint mat_id = batchs[batch_id].mat_list[i].mat_id;
+            mat_list[i] = materials[mat_id];
+        }
+        return (batchs[batch_id], mat_list);
     }
 }
