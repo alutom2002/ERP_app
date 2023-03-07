@@ -83,3 +83,11 @@ input,select,textarea {
 .form{
     background-color: #3a3a3a!important;
 }
+
+.row{
+    display: flex;
+}
+
+.col-6{
+    flex:50%;
+}

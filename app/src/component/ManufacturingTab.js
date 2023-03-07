@@ -13,7 +13,6 @@ function ManufacturingTab(props) {
     const nav = useNavigate();
     const { role, address } = props.account;
     const [list, setList] = useState([]);
-    const [len, setLen] = useState();
     const [curr, setCurr] = useState("");
     const [start, setStart] = useState("");
     const [end, setEnd] = useState("");
@@ -30,9 +29,6 @@ function ManufacturingTab(props) {
 
     useEffect(() => {
         getProductBatchList();
-        if (list.length !== 0) {
-            modifi(list);
-        }
     }, [props.account.address]);
 
     async function getProductBatchList() {
@@ -43,7 +39,6 @@ function ManufacturingTab(props) {
             setList(data.filter(d => d.id !== '0')); */
             const data = await contract.methods.getPB(1).call();
             setList(data[0]);
-            modifi(list);
         }
         catch (e) {
             console.log(e);
@@ -52,12 +47,18 @@ function ManufacturingTab(props) {
     console.log("List: ", list);
     console.log("List length: ", list.length);
 
-    function modifi(list) {
-        setLen(list.timeline.length);
-        setCurr(BATCH_STATUS[list.timeline[len - 1].status]);
-        setStart(new Date(parseInt(list.create_at) * 1000).toLocaleDateString());
-        setEnd(list.finished_at !== '0' ? new Date(parseInt(list.finished_at) * 1000).toLocaleDateString() : '');
+    if (list.length !== 0 && start === "") {
+        modifi(list);
     }
+
+    function modifi(params) {
+        console.log("Run modifi");
+        let len = params.timeline.length;
+        setCurr(BATCH_STATUS[params.timeline[len - 1].status]);
+        setStart(new Date(parseInt(params.create_at) * 1000).toLocaleDateString());
+        setEnd(params.finished_at !== '0' ? new Date(parseInt(params.finished_at) * 1000).toLocaleDateString() : '');
+    }
+
     console.log(start, end, curr);
     return (
         <div className="tab">

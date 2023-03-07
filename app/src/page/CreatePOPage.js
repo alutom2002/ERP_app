@@ -116,12 +116,11 @@ function CreatePOPage(props) {
             sorders = [[[[orderList[0].index, orderList[0].name, orderList[0].unit, false, 0, 0]], orderList[0].quantity]];
             //sorders = orderList.map(({ id, orderid, batchid, used, name, quantity, unit}) => [[[[id ? id : 0, name, unit, false, orderid ? orderid : 0, batchid ? batchid : 0]],quantity]]);
             console.log(orderList);
-            console.log(sorders)
-            let test = [[[[1, "a", "b", false, 1, 1]], 5]];
-            console.log(test);
+            console.log('so', sorders);
+            console.log('po', porders);
             const rd = parseInt(new Date(receiveDate).getTime() / 1000);
             if (role === ROLE.MANAGER) {
-                console.log("RUN");
+                console.log("RUN createPO");
                 contract.methods.createPO(supName, customer, porders, rd)
                     .send({ from: '0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6' })
                     .once('receipt', async r => {
@@ -132,6 +131,7 @@ function CreatePOPage(props) {
                     });
             }
             else if (role === ROLE.RETAILER) {
+                console.log("RUN createSO")
                 contract.methods.createSO(accounts[0].name, customer, sorders, rd)
                     .send({ from: '0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6' })
                     .once('receipt', async r => {

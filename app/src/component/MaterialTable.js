@@ -44,8 +44,9 @@ export default function MaterialTable(props){
                     <li>Quantity</li>
                     <li>Unit</li>
                     {/* <li>Check result</li>
-                    <li>Check time</li> */}
+                    <li>Check time</li> 
                     {status === 'DONE' && <li>QR</li>}
+                    */}
                 </ul>
                 {
                     matList.map((mat, i) => (
@@ -62,8 +63,9 @@ export default function MaterialTable(props){
                                         {mat.check_result === '' &&  <button className="btn submit" onClick={()=>addCheck(i)}><span className='icon'><FaPencilAlt/></span>Add Material Check</button>}
                                     </li>
                                 )
-                            } */}
+                            } 
                             {status === 'DONE' && <QR value={'/o/' + materials[i].order_id}/>}
+                            */}
                         </ul>
                     ))
                 }

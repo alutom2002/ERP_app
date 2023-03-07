@@ -36,14 +36,15 @@ const openBtnStyle = {
 
 export default function QR(props){
     const [openModal, setOpenModal] = useState();
-    const {value} = props;
+    const {value, isId} = props;
 
     return(
         <>
             <button style={openBtnStyle} className='btn qr-btn' onClick={()=>setOpenModal(true)}><span className='icon'><FaQrcode/></span></button>
             <Modal isOpen={openModal} style={customStyles}>
                 <button style={closeBtnStyle} className='btn' onClick={()=>setOpenModal(false)}><span className='icon'><FaTimes/></span></button>
-                <ReactQr value={'http://localhost:3000/qr' + value}/>
+                {!isId && <ReactQr value={'http://localhost:3000/qr' + value}/>}
+                {isId && <ReactQr value={value}/>}
             </Modal>
         </>
     )

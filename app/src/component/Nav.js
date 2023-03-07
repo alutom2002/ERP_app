@@ -25,7 +25,7 @@ function Nav(props){
         return(
             <div className="nav">
                 <div className='center-wrapper none'>
-                    <h2><Link to='/'>Cosmetics</Link></h2>
+                    <h2><Link to='/'>Niken</Link></h2>
                 </div>
             </div>
         );    

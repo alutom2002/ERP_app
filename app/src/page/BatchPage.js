@@ -10,8 +10,6 @@ import toastr from 'toastr';
 import MaterialTable from '../component/MaterialTable';
 import Timeline from '../component/Timeline';
 import { BATCH_STATUS } from '../helper/status';
-import QualityTable from '../component/QualityTable';
-import ProduceTable from '../component/ProduceTable';
 import QR from '../component/QR';
 import { CONTRACT_ADDRESS } from '../config/contract.config';
 
@@ -19,11 +17,10 @@ function BatchPage(props) {
     const nav = useNavigate();
     const { id } = useParams();
     const { role, address } = props.account;
-
     const [data, setData] = useState();
     const [materials, setMaterials] = useState([]);
     const [orders, setOrders] = useState([]);
-    console.log(contract);
+
     useEffect(() => {
         getData();
     }, []);
@@ -59,7 +56,7 @@ function BatchPage(props) {
                 name: 'Start production',
                 next: 1
             };
-        else if (status === 'PREPARE_MAT' && role === ROLE.PRODUCER){
+        else if (status === 'PREPARE_MAT' && role === ROLE.PRODUCER) {
 
             console.log("Show");
             return {
@@ -72,11 +69,6 @@ function BatchPage(props) {
                 name: 'Finish produce',
                 next: 3
             };
-        /* else if (status === 'CONFIRM' && role === ROLE.MANAGER)
-            return {
-                name: 'Finish production',
-                next: 4
-            }; */
         else
             return null;
     }
@@ -84,7 +76,7 @@ function BatchPage(props) {
     function changeStatus(nextStatus) {
         try {
             contract.methods.changeBatchStatus(id, nextStatus)
-            .send({ from: "0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6" })
+                .send({ from: "0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6" })
                 .once('receipt', r => {
                     console.log(r);
                     toastr.success('Change state success!');
@@ -99,7 +91,6 @@ function BatchPage(props) {
     if (!data)
         return null;
 
-    console.log(data);
     const {
         info: {
             p: {
@@ -116,8 +107,7 @@ function BatchPage(props) {
     const status = BATCH_STATUS[data.timeline[data.timeline.length - 1].status];
     const canChangeStatus = status !== 'DONE' && status !== 'CANCEL';
     const nextStatus = getNextStatus(status);
-    console.log(status);
-    console.log(nextStatus);
+
     return (
         <div className="page create-po-page create-pb-page batch-page">
             <div className="center-wrapper">
@@ -130,14 +120,20 @@ function BatchPage(props) {
                         </div>
                     )
                 }
-                {(status === 'DONE' && !window.location.pathname.includes('qr')) && <QR value={'/b/' + id} />}
+                {/* {(status === 'DONE' && !window.location.pathname.includes('qr')) && <QR value={'/b/' + id} />} */}
                 <h3>Infomations:</h3>
+                <div className='row'>
+                    <div className='col-6'>
                 <p>Product: <span>{data.info.p[0].name}</span></p>
-                <p>Quantity: <span>{quantity}</span></p>
-                <p>Unit: <span>{data.info.p[0].unit}</span></p>
                 <p>Start date: <span>{new Date(parseInt(create_at) * 1000).toLocaleDateString()}</span></p>
+                <p>Quantity: <span>{quantity}</span></p>
+                    </div>
+                    <div className='col-6'>
+                <p>Unit: <span>{data.info.p[0].unit}</span></p>
                 <p>End date: <span>{finished_at !== '0' ? new Date(parseInt(finished_at) * 1000).toLocaleDateString() : ''}</span></p>
                 <p>Status: <span>{status}</span></p>
+                    </div>
+                </div>
                 <MaterialTable
                     role={role}
                     batchId={id}
@@ -146,23 +142,7 @@ function BatchPage(props) {
                     materials={materials || []}
                     status={status}
                 />
-                {/* <ProduceTable
-                    role={role}
-                    batchId={id}
-                    address={address}
-                    produceList={data.info}
-                    status={status}
-                    create_at={create_at}
-                    finished_at={finished_at}
-                /> */}
-                {/* <QualityTable
-                    role={role}
-                    batchId={id}
-                    address={address}
-                    checkList={data.check_list}
-                    status={status}
-                /> */}
-                <Timeline timeline={timeline} status_names={BATCH_STATUS} />
+                <Timeline timeline={timeline} isSO={2} status_names={BATCH_STATUS} />
             </div>
         </div>
     )

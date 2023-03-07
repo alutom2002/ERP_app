@@ -7,16 +7,18 @@ import toastr from 'toastr';
 import { BATCH_STATUS, ORDER_STATUS } from '../helper/status';
 import { stateToProps } from '../helper/stateToProps';
 import Timeline from '../component/Timeline';
-import QR from '../component/QR';
 import { CONTRACT_ADDRESS } from '../config/contract.config';
+import CryptoJS from "crypto-js";
 
 function ScanPage(props) {
     const [order, setOrder] = useState();
     const [batch, setBatch] = useState();
     const [index, setIndex] = useState();
     const [data, setData] = useState([]);
-    const [id, setId] = useState();
+    const [id, setId] = useState(0);
+    const [text, setText] = useState();
     const [visable, Setvisable] = useState(false);
+    const [used, setUsed] = useState(false);
 
     useEffect(() => {
         getProductCus();
@@ -39,6 +41,7 @@ function ScanPage(props) {
 
     async function getOrderData() {
         try {
+            console.log("index ", index);
             const orders = await contract.methods.getOrderById(data[index].product_list[0].p[0].orderid).call();
             const batchs = await contract.methods.getPB(data[index].product_list[0].p[0].batchid).call();
             setOrder(orders);
@@ -60,50 +63,78 @@ function ScanPage(props) {
             console.log(e);
         }
     }
-    
+
     console.log(data);
     console.log("Order: ", order);
     console.log("Batch: ", batch);
 
-    function submitSearch(){
-        for(let i = 0; i < data.length; i++) {
-            if(id === data[i].product_list[0].p[0].id){
-                console.log(i);
-                setIndex(i);
-                Setvisable(true);
-                toastr.success('Tìm thấy sản phẩm vui lòng đợi load thông tin sản phẩm');
-                getOrderData();
-                /* data[i].product_list[0].p[0].used ? '' :  */
-            }
+    const secretPass = "XkhZG4fW2t2W";
+
+    function decryptData(id) {
+        const bytes = CryptoJS.AES.decrypt(id, secretPass);
+        const data = bytes.toString(CryptoJS.enc.Utf8);
+        if (data === "") {
+            toastr.warning('Invalid input code')
+            return 0;
         }
-        toastr.warning('Không tìm thấy sản phẩm')
+        else return JSON.parse(data);
+    };
+    console.log(used);
+    function submitSearch() {
+        setId(decryptData(text));
+        if (id !== 0) {
+            for (let i = 0; i < data.length; i++) {
+                if (id === data[i].product_list[0].p[0].id) {
+                    setIndex(i);
+                    Setvisable(true);
+                    toastr.success('Found a product, please wait for product information to load');
+                    getOrderData();
+                    return;
+                }
+            }
+            toastr.warning('Product not found')
+        }
+    }
+
+    async function usedProudct() {
+        try {
+            const used = await contract.methods.useProduct(index)
+                .send({ from: "0xb2D9757eE9Dcc527b5dAA25da9F3B3c1bB1FFaE6" })
+                .once('receipt', r => {
+                    setUsed(true);
+                    toastr.success('Change product status success');
+                    console.log(r);
+                });;
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
 
     return (
         <div className="mainContainer">
             <div className="dataContainer">
-                <h1 className="astro-UL4SEYQL">Tra cứu thông tin <span className="text-gradient astro-UL4SEYQL">sản phẩm</span></h1>
+                <h1 className="astro-UL4SEYQL">Search Product <span className="text-gradient astro-UL4SEYQL">Information</span></h1>
                 <div className="container svelte-1eadklx">
                     <div className="svelte-1eadklx w-100">
-                        <label htmlFor="search">Mã:</label>
-                        <input type="text" placeholder="Nhập mã trên qr tại đây" id="search" name="id" className="svelte-1eadklx" value={id} onChange={ e => setId(e.target.value)}/>
-                        <button type="submit" className="svelte-1eadklx" onClick={submitSearch}><span className="svelte-1eadklx">Tìm</span></button>
+                        <label htmlFor="search">Code:</label>
+                        <input type="text" placeholder="Nhập mã trên qr tại đây" id="search" name="text" className="svelte-1eadklx" value={text} onChange={e => setText(e.target.value)} />
+                        <button type="submit" className="svelte-1eadklx" onClick={submitSearch}><span className="svelte-1eadklx">Search</span></button>
                     </div>
 
                     {data && visable && order && batch && (
                         <div className="container svelte-1eadklx">
-                            <div className="svelte-1eadklx">Tên sản phẩm: {data[0].product_list[0][0][0].name}</div>
-                            <div className="svelte-1eadklx">Tình trạng sản phẩm: {data[0].product_list[0][0][0].used ? 'Đã sử dụng' : 'Chưa sử dụng'}</div>
-                            <div className="svelte-1eadklx">Sản xuất từ vật liệu: {order.mtl_list.map(a => a.name + ',')}</div>
-                            <div className="svelte-1eadklx">Nhập vật liệu từ nguồn: {order.supplier}</div>
-                            <div className="svelte-1eadklx">Sản xuất vào: {new Date(parseInt(batch[0].create_at)*1000).toLocaleDateString()}</div>
-                            <div className="svelte-1eadklx">Sản xuất hoàn thành: {new Date(parseInt(batch[0].finished_at)*1000).toLocaleDateString()}</div>
-                            <div className="svelte-1eadklx">Sản xuất bởi: Producer</div>
-                            <div className="svelte-1eadklx">Được bán bởi: {data[0].customer}</div>
-                            <div className="svelte-1eadklx">Thời gian nhập vật liệu:</div>
-                            <Timeline timeline={order.timeline} status_names={ORDER_STATUS} />
-                            <div className="svelte-1eadklx">Thời gian sản xuất:</div>
-                            <Timeline timeline={batch[0].timeline} status_names={BATCH_STATUS} />
+                            <div className="svelte-1eadklx">Product Name: {data[0].product_list[0][0][0].name}</div>
+                            <div className="svelte-1eadklx">Product Status: {used ? 'Used' : 'Not used'}</div>
+                            <div className="svelte-1eadklx">Made from material: {order.mtl_list.map(a => a.name + ',')}</div>
+                            <div className="svelte-1eadklx">Import material from: {order.supplier}</div>
+                            <div className="svelte-1eadklx">Produce by: Producer</div>
+                            <div className="svelte-1eadklx">Sale by: {data[0].customer}</div>
+                            <div className="svelte-1eadklx">Timeline Materail:</div>
+                            <Timeline timeline={order.timeline} isSO={0} status_names={ORDER_STATUS} />
+                            <div className="svelte-1eadklx">Timeline Produce:</div>
+                            <Timeline timeline={batch[0].timeline} isSO={2} status_names={BATCH_STATUS} />
+                            {used ? '' : <button type="submit" className="svelte-1eadklx" onClick={usedProudct}><span className="svelte-1eadklx">Confirm used</span></button>}
                         </div>
                     )}
                 </div>

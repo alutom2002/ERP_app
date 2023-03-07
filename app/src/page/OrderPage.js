@@ -20,19 +20,6 @@ function OrderPage(props) {
     const [order, setOrder] = useState();
     const [names, setNames] = useState([]);
     const [data, setData] = useState([]);
-    
-    /* const [encrptedData, setEncrptedData] = useState("");
-
-    const secretPass = "XkhZG4fW2t2W";
-
-    const encryptData = (id) => {
-        const data = CryptoJS.AES.encrypt(
-            JSON.stringify(id),
-            secretPass
-        ).toString();
-
-        setEncrptedData(data);
-    }; */
 
     console.log(order);
     useEffect(() => {
@@ -63,10 +50,6 @@ function OrderPage(props) {
         try {
             const data = await contract.methods.getOrderById(id).call();
             setOrder(data);
-            /* if (data.supplier === "Manager") {
-                const data2 = await contract.methods.getPurchaseOrderName(id).call();
-                setNames(data2);
-            } */
         }
         catch (e) {
             console.log(e);
@@ -162,7 +145,6 @@ function OrderPage(props) {
         <div className="page create-po-page">
             <div className="center-wrapper">
                 <h2>{getTitle()} {id}</h2>
-                {/* <button className='btn submit' onClick={() => encrptedData(1)}>Create qr</button> */}
                 {
                     canChangeStatus && (
                         <div className='order-btn-container'>
@@ -174,13 +156,19 @@ function OrderPage(props) {
                         </div>
                     )
                 }
-                {(status === 'RECEIVED' && (role === ROLE.RETAILER) && !window.location.pathname.includes('qr')) && <QR value={'/o/' + id} />}
+                {(status === 'RECEIVED' && role === ROLE.RETAILER && !window.location.pathname.includes('qr')) && <QR value={'/o/' + id} />}
                 <h3>Infomations:</h3>
-                <p>Customer: <span>{order.customer}</span></p>
-                <p>Supplier: <span>{order.supplier}</span></p>
-                <p>Order date: <span>{orderDate}</span></p>
-                <p>Receive date: <span>{receivedDate}</span></p>
-                <p>Status: <span>{status}</span></p>
+                <div className='row'>
+                    <div className='col-6'>
+                        <p>Customer: <span>{order.customer}</span></p>
+                        <p>Order date: <span>{orderDate}</span></p>
+                        <p>Status: <span>{status}</span></p>
+                    </div>
+                    <div className='col-6'>
+                        <p>Supplier: <span>{order.supplier}</span></p>
+                        <p>Receive date: <span>{receivedDate}</span></p>
+                    </div>
+                </div>
                 <h3>Order list:</h3>
                 {
                     order.supplier !== "Manager" ?
@@ -226,10 +214,11 @@ function OrderPage(props) {
                             </div>
                         )
                 }
-                <Timeline timeline={order.timeline} status_names={ORDER_STATUS} />
-                <QualityTable
-                    data={data}
-                />
+                <Timeline timeline={order.timeline} isSO={0} status_names={ORDER_STATUS} />
+
+                {status === 'RECEIVED' && role === ROLE.RETAILER && <QualityTable
+                    data={data[1]}
+                />}
             </div>
         </div>
     )

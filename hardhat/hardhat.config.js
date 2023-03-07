@@ -32,11 +32,17 @@ module.exports = {
       allowUnlimitedContractSize: true,
     },
     goerli: {
-      url: process.env.STAGING_GOERL_KEY,
+      url: process.env.STAGING_QUICKNODE_KEY,
       accounts: [process.env.PRIVATE_KEY],
+      allowUnlimitedContractSize: true,
+      chainId: 5,
+      gasPrice: 20000000000,
+      networkCheckTimeout: 10000,
+      timeoutBlocks: 200,
+      skipDryRun: true
     },
     mumbai: {
-      url: process.env.STAGING_MUMBAI_KEY,
+      url: process.env.STAGING_QUICKNODE_KEY,
       accounts: [process.env.PRIVATE_KEY],
       allowUnlimitedContractSize: true,
       chainId: 80001,
