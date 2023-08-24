@@ -1,4 +1,4 @@
-# ERP App using blockchain to store data
+# ERP App using blockchain to storage data
 
 This is an ERP app that the procedure is stored in the blockchain and in the final process the user can scan the QR code to retrieve the data from the blockchain.<br>
 
