@@ -12,16 +12,16 @@ import { CONTRACT_ADDRESS } from '../config/contract.config';
 
 function PurchaseTab(props) {
     const nav = useNavigate();
-    const { role, address } = props.account;
+    const { role } = props.account;
     const [POList, setPOList] = useState([]);
     const isSaleTab = props.isSaleTab || role === ROLE.RETAILER;
     useEffect(() => {
         const event_hash = web3Socket.utils.sha3('reload()');
         web3Socket.eth.subscribe('logs', { address: CONTRACT_ADDRESS, topics: [event_hash] }, (error, event) => { })
-        .on('connected', function(){
-            console.log('CONNECTED !!!!')
-        })    
-        .on('data', function(event){
+            .on('connected', function () {
+                console.log('CONNECTED !!!!')
+            })
+            .on('data', function (event) {
                 getMaterialOrderList();
             })
             .on('error', function (error, receipt) {
@@ -32,7 +32,7 @@ function PurchaseTab(props) {
     useEffect(() => {
         getMaterialOrderList();
     }, [props.account.address]);
-    console.log(contract);
+
     async function getMaterialOrderList() {
         try {
             let isSO = isSaleTab;
@@ -43,7 +43,7 @@ function PurchaseTab(props) {
             else if(role === ROLE.MANAGER && isSaleTab === false){
                 isSO = false;
             }                
-            else isSO = true;   */                          
+            else isSO = true;   */
             const mat_order_list = await contract.methods.getOrder("", isSO).call();
             console.log(mat_order_list);
             setPOList(mat_order_list.filter(o => {
@@ -58,7 +58,7 @@ function PurchaseTab(props) {
             console.log(e);
         }
     }
-    console.log("PO List: ", POList);
+    
     return (
         <div className="tab">
             <div className="center-wrapper">

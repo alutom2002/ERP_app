@@ -1,5 +1,4 @@
 import '../style/BatchPage.scss';
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ROLE } from "../helper/role";
@@ -10,11 +9,9 @@ import toastr from 'toastr';
 import MaterialTable from '../component/MaterialTable';
 import Timeline from '../component/Timeline';
 import { BATCH_STATUS } from '../helper/status';
-import QR from '../component/QR';
 import { CONTRACT_ADDRESS } from '../config/contract.config';
 
 function BatchPage(props) {
-    const nav = useNavigate();
     const { id } = useParams();
     const { role, address } = props.account;
     const [data, setData] = useState();

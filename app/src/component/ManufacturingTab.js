@@ -2,7 +2,7 @@
 import { FaPlus, FaInfoCircle } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { stateToProps } from '../helper/stateToProps';
-import { batch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { contract, web3Socket } from '../helper/web3';
 import { useNavigate } from 'react-router-dom';
 import { BATCH_STATUS } from '../helper/status';
@@ -11,7 +11,7 @@ import { CONTRACT_ADDRESS } from '../config/contract.config';
 
 function ManufacturingTab(props) {
     const nav = useNavigate();
-    const { role, address } = props.account;
+    const { role } = props.account;
     const [list, setList] = useState([]);
     const [curr, setCurr] = useState("");
     const [start, setStart] = useState("");

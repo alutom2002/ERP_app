@@ -14,7 +14,7 @@ const suppliers = accounts.filter(acc => acc.role === ROLE.SUPPLIER);
 function CreatePOPage(props) {
     const nav = useNavigate();
 
-    const { role, name: customer, address } = props.account;
+    const { role, name: customer } = props.account;
     const [orderList, setOrderList] = useState([]);
     const [supplier, setSupplier] = useState(0);
     const [batchs, setBatchs] = useState([]);

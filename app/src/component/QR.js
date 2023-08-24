@@ -1,5 +1,4 @@
 import { FaQrcode, FaTimes } from 'react-icons/fa';
-import { GiQr } from 'react-icons/gi';
 import Modal from 'react-modal';
 import ReactQr from 'react-qr-code';
 import { useState } from 'react';

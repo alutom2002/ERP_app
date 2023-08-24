@@ -11,6 +11,7 @@ export default function Timeline(props) {
                 case '2': return "Manager";
                 case '4': return "Manager";
                 case '5': return "Retailer";
+                default: return "";
             }
         }
         else if (isSO === 0) {
@@ -20,6 +21,7 @@ export default function Timeline(props) {
                 case '2': return "Supplier";
                 case '4': return "Supplier";
                 case '5': return "Manager";
+                default: return "";
             }
         }
         else {
@@ -28,6 +30,7 @@ export default function Timeline(props) {
                 case '1': return "Producer";
                 case '2': return "Producer";
                 case '3': return "Producer";
+                default: return "";
             }
         }
     }

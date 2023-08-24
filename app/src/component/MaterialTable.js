@@ -1,39 +1,35 @@
 import { useState } from 'react';
-import { FaPencilAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import { contract } from '../helper/web3';
 import toastr from 'toastr';
-import { ROLE } from '../helper/role';
-import QR from './QR';
 
 export default function MaterialTable(props){
-    const {role, batchId, address, matList, materials, status} = props;
+    const {batchId, address, matList, materials, status} = props;
 
-    const [openForm, setOpenForm] = useState(false);
-    const [selectIndex, setSelectIndex] = useState(0);
-    const [checkResult, setCheckResult] = useState('');
+    // const [openForm, setOpenForm] = useState(false);
+    // const [selectIndex, setSelectIndex] = useState(0);
+    // const [checkResult, setCheckResult] = useState('');
 
-    function addCheck(index){
-        setSelectIndex(index);
-        setOpenForm(true);
-    }
+    // function addCheck(index){
+    //     setSelectIndex(index);
+    //     setOpenForm(true);
+    // }
 
-    function submitForm(){
-        contract.methods.addProductMaterialCheck(batchId, selectIndex, checkResult).send({from: address})
-        .once('receipt', r => {
-            console.log(r);
-            toastr.success('Add check result success!');
-            closeForm();
-        });
-    }
+    // function submitForm(){
+    //     contract.methods.addProductMaterialCheck(batchId, selectIndex, checkResult).send({from: address})
+    //     .once('receipt', r => {
+    //         console.log(r);
+    //         toastr.success('Add check result success!');
+    //         closeForm();
+    //     });
+    // }
 
-    function closeForm(){
-        setOpenForm(false);
-        setCheckResult('');
-    }
+    // function closeForm(){
+    //     setOpenForm(false);
+    //     setCheckResult('');
+    // }
 
-    const canAddCheckResult = status === 'PREPARE_MAT';
-    console.log("Mat: ", matList);
-    console.log("Material: ",materials)
+    // const canAddCheckResult = status === 'PREPARE_MAT';
+ 
     return(
         <>
             <h3>Material List:</h3>

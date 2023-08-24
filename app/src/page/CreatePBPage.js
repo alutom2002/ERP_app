@@ -11,8 +11,6 @@ import toastr from 'toastr';
 function CreatePBPage(props) {
     const nav = useNavigate();
 
-    const { address } = props.account;
-
     const [materials, setMaterials] = useState([]);
     const [productMatList, setProductMatList] = useState([]);
 

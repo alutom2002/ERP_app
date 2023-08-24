@@ -1,5 +1,4 @@
 import '../style/CreatePOPage.scss';
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ROLE } from "../helper/role";
@@ -12,13 +11,11 @@ import Timeline from '../component/Timeline';
 import QualityTable from '../component/QualityTable';
 import QR from '../component/QR';
 import { CONTRACT_ADDRESS } from '../config/contract.config';
-import CryptoJS from "crypto-js";
 
 function OrderPage(props) {
     const { id } = useParams();
-    const { role, address } = props.account;
+    const { role } = props.account;
     const [order, setOrder] = useState();
-    const [names, setNames] = useState([]);
     const [data, setData] = useState([]);
 
     console.log(order);
@@ -73,6 +70,7 @@ function OrderPage(props) {
                         name: 'Receive',
                         next: 5
                     };
+                default: return null;
             }
         }
         else {
@@ -91,6 +89,7 @@ function OrderPage(props) {
                     };
                 case 'DELIVERING':
                     return null;
+                default: return null;
             }
         }
     }

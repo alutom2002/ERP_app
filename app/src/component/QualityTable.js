@@ -1,8 +1,3 @@
-import { useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
-import { contract } from '../helper/web3';
-import toastr from 'toastr';
-import { ROLE } from '../helper/role';
 import CryptoJS from "crypto-js";
 import QR from '../component/QR';
 
@@ -16,8 +11,6 @@ export default function QualityTable(props) {
         return text;
     };
 
-    console.log("Table: ", data);
-    //console.log("data 1: ", data[1][0].product_list[0][0][0].used)
     return (
         <>
             <div className='header-row'>
